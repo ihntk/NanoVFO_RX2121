@@ -1,9 +1,9 @@
-#include "disp_oled128x64.h"
+#include "disp_OLED128x64.h"
 // SSD1306Ascii library https://github.com/greiman/SSD1306Ascii
 #include "SSD1306AsciiAvrI2c.h"
-#include "fonts\lcdnums14x24mod.h"
-#include "fonts\quad7x8.h"
-#include "fonts\lcdbat.h"
+#include "fonts/lcdnums14x24mod.h"
+#include "fonts/quad7x8.h"
+#include "fonts/lcdbat.h"
 #include "utils.h"
 #ifdef RTC_ENABLE
   #include "RTC.h"
@@ -38,17 +38,17 @@ void Display_OLED128x64::setBright(uint8_t brightness)
 {
   if (brightness < 0) brightness = 0;
   if (brightness > 15) brightness = 15;
-  if (brightness == 0) 
+  if (brightness == 0)
     oled64.ssd1306WriteCmd(SSD1306_DISPLAYOFF);
   else {
     if (last_brightness == 0)
       oled64.ssd1306WriteCmd(SSD1306_DISPLAYON);
     oled64.setContrast(brightness << 4);
   }
-  last_brightness = brightness; 
+  last_brightness = brightness;
 }
 
-void Display_OLED128x64::setup() 
+void Display_OLED128x64::setup()
 {
 #ifdef DISPLAY_OLED128x64
   oled64.begin(&Adafruit128x64, I2C_ADD_DISPLAY_OLED);
@@ -62,7 +62,7 @@ void Display_OLED128x64::setup()
 
 extern int Settings[];
 
-void Display_OLED128x64::Draw(TRX& trx) 
+void Display_OLED128x64::Draw(TRX& trx)
 {
   int FQGRAN = (trx.sideband == AM ? 100 : 50);
   long f = (((trx.Freq+FQGRAN/2)/FQGRAN)*FQGRAN)/10;
@@ -86,7 +86,7 @@ void Display_OLED128x64::Draw(TRX& trx)
   }
 
   oled64.setFont(X11fixed7x14);
-  
+
   if (trx.BandIndex != last_BandIndex) {
     oled64.setCursor(0,0);
     draw_space(4);
@@ -102,7 +102,7 @@ void Display_OLED128x64::Draw(TRX& trx)
     else if (trx.VBAT > 3700) new_bat = 3;
     else if (trx.VBAT > 3500) new_bat = 2;
     else if (trx.VBAT > 3300) new_bat = 1;
-  
+
     if (new_bat != last_bat || new_bat == 0) {
       last_bat = new_bat;
       oled64.setFont(lcdbat2);
@@ -157,7 +157,7 @@ void Display_OLED128x64::Draw(TRX& trx)
     RTCData d;
     char buf[7],*pb;
     last_tmtm=millis();
-    RTC_Read(&d);   
+    RTC_Read(&d);
     //sprintf(buf,"%2x:%02x",d.hour,d.min);
     pb=cwr_hex2sp(buf,d.hour);
     if (millis()/1000 & 1) *pb++=':';
@@ -285,7 +285,7 @@ void Display_OLED128x64::Draw(TRX& trx)
     else
       draw_space(3);
   }
-   
+
 }
 
 void Display_OLED128x64::DrawItemEdit(PGM_P text, int value)
@@ -433,4 +433,3 @@ void Display_OLED128x64::clear()
   for (uint8_t i=0; i < 15; i++) last_sm[i]=0;
   last_tmtm=0;
 }
-
